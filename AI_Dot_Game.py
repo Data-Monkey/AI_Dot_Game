@@ -30,10 +30,10 @@ def draw_target():
 
 # -------------------------------------------------------------------
 class Obstacle:
-    def __init__(self):
-        self.tlXY = (300,380)
-        self.width = 200
-        self.height = 50
+    def __init__(self, tlXY=(300,400), width=100, height=20):
+        self.tlXY = tlXY
+        self.width = width
+        self.height = height
         self.color = RED
         self.rect = [*self.tlXY, self.width, self.height]
         
@@ -47,7 +47,31 @@ class Obstacle:
             dotXY[1] <= self.tlXY[1]+self.height):
                return True
         return False
-            
+
+# -------------------------------------------------------------------
+
+class Obstacles:
+    def __init__(self, mode='simple'):
+        self.mode = mode            
+        self.obstacles = []
+        self.create_obstacles()
+        
+    def create_obstacles(self):
+        if self.mode == 'simple':
+            self.obstacles.append(Obstacle((300,300),200,10))
+        elif self.mode == 'medium':
+            self.obstacles.append(Obstacle((100,500),300,10))
+        elif self.mode == 'hard':
+            self.obstacles.append(Obstacle((0,400),500,10))
+            self.obstacles.append(Obstacle((400,300),400,10))
+    
+    def show(self):
+        [obst.show() for obst in self.obstacles]
+
+    def collision(self, dotXY):            
+        if True in [obst.collision(dotXY) for obst in self.obstacles]:
+            return True
+        return False
 # -------------------------------------------------------------------
 class Dot:
     def __init__(self):
@@ -215,13 +239,13 @@ if __name__ == "__main__":
 # -------------------------------------------------------------------
     
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    obst = Obstacle()
+    obst = Obstacles(mode='hard')
     
     gen = []
     pop = Population(POPULATION_SIZE)
     pop.randomize_instructions(1000)
     
-    for i in range(20) :
+    for i in range(80) :
     # let evolution do its work
     
     
