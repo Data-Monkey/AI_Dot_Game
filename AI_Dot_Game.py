@@ -20,7 +20,7 @@ WHITE = 255,255,255
 MUTATE_RATIO = 0.02
 
 TARGET_XY = (int(WIDTH/2),5)
-START_XY =  (400,200) #(int(WIDTH/2),HEIGHT-5)  # start at the bottom centre
+START_XY =  (int(WIDTH/2),HEIGHT-50)  # start at the bottom centre
 VECTOR_LEN = 10
 POPULATION_SIZE = 100
 
@@ -200,7 +200,7 @@ if __name__ == "__main__":
     pop = Population(POPULATION_SIZE)
     pop.randomize_instructions(1000)
     
-    for i in range(50) :
+    for i in range(5000) :
     # let evolution do its work
     
     
@@ -218,7 +218,7 @@ if __name__ == "__main__":
     
         # generation done
         pop.calculate_fitness()
-        gen.append(pop)
+#        gen.append(pop)
         print(f'Gen {pop.generation} total fitness {pop.total_fitness}')
         print(f'  best fitness: {pop.best_fitness}')
        # pop = Population(POPULATION_SIZE)
