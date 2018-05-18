@@ -9,7 +9,7 @@ pygame.init()
 clockobject = pygame.time.Clock()
 clockobject.tick(1)
 
-size = WIDTH, HEIGHT = 800,800
+WIDTH, HEIGHT = 800,800
 
 BLACK = 0, 0, 0
 GREEN = 0,255,0
@@ -41,14 +41,14 @@ class Dot:
         self.fitness = 0.000000
 
 
-    def __random_vector(self):
+    def random_vector(self):
         X = random.randint(VECTOR_LEN*(-1),VECTOR_LEN)
         Y = random.randint(VECTOR_LEN*(-1),VECTOR_LEN)
         return (X,Y)
 
     def randomize_instructions(self, size=1000):
         for i in range(size):
-            XY = self.__random_vector()
+            XY = self.random_vector()
             self.instructions.append(XY)
         return self.instructions        
 
@@ -100,13 +100,13 @@ class Dot:
 
     def clone(self):
          clone = Dot()
-         clone.instructions = self.instructions
+         clone.instructions = self.instructions[:]
          return clone
 
     def mutate(self):
         for i in range(len(self.instructions)):
             if random.random() < MUTATE_RATIO:
-                self.instructions[i] = random_vector()
+                self.instructions[i] = self.random_vector()
 
 
 # -------------------------------------------------------------------
@@ -191,41 +191,44 @@ class Population:
 
 
 # -------------------------------------------------------------------
-screen = pygame.display.set_mode(size)
-
-gen = []
-pop = Population(POPULATION_SIZE)
-pop.randomize_instructions(1000)
-
-for i in range(5) :
-# let evolution do its work
-
-
-    pygame.display.update()
-    while pop.alive():
-        # draw the playing field
-        draw_target()
-
-        pop.show()
-        pop.update()
-
-        # clean up for next move
-        pygame.display.flip()
-        screen.fill(BLACK)
-
-    # generation done
-    pop.calculate_fitness()
-    gen.append(pop)
-    print(f'Gen {pop.generation} total fitness {pop.total_fitness}')
-    print(f'  best fitness: {pop.best_fitness}')
-   # pop = Population(POPULATION_SIZE)
-    next_pop = pop.natural_selection()
-    pop = next_pop
-
-  #  test.mutateDemBabies();
-
-
-
-
-pygame.quit()
-#sys.exit()
+if __name__ == "__main__":
+# -------------------------------------------------------------------
+    
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    
+    gen = []
+    pop = Population(POPULATION_SIZE)
+    pop.randomize_instructions(1000)
+    
+    for i in range(50) :
+    # let evolution do its work
+    
+    
+        pygame.display.update()
+        while pop.alive():
+            # draw the playing field
+            draw_target()
+    
+            pop.show()
+            pop.update()
+    
+            # clean up for next move
+            pygame.display.flip()
+            screen.fill(BLACK)
+    
+        # generation done
+        pop.calculate_fitness()
+        gen.append(pop)
+        print(f'Gen {pop.generation} total fitness {pop.total_fitness}')
+        print(f'  best fitness: {pop.best_fitness}')
+       # pop = Population(POPULATION_SIZE)
+        next_pop = pop.natural_selection()
+        pop = next_pop
+    
+      #  test.mutateDemBabies();
+    
+    
+    
+    
+    pygame.quit()
+    sys.exit()
