@@ -245,7 +245,7 @@ if __name__ == "__main__":
     pop = Population(POPULATION_SIZE)
     pop.randomize_instructions(1000)
     
-    for i in range(80) :
+    for i in range(200) :
     # let evolution do its work
     
     
