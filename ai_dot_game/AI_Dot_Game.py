@@ -1,7 +1,5 @@
 import sys
 import pygame
-from functools import reduce
-from .dot import Dot
 from .population import Population
 from . import *
 
@@ -15,7 +13,9 @@ def initialise_game():
     pygame.init()
     clockobject = pygame.time.Clock()
     clockobject.tick(1)
-    return pygame.display.set_mode((HEIGHT, WIDTH)), Population(POPULATION_SIZE)
+    pop = Population(POPULATION_SIZE)
+    pop.randomize_instructions()
+    return pygame.display.set_mode((HEIGHT, WIDTH)), pop
 
 
 def play_game(screen, population):
