@@ -5,7 +5,7 @@ from . import *
 
 
 def draw_target():
-    pygame.draw.circle(screen, GREEN,TARGET_XY, 8)
+    pygame.draw.circle(screen, GREEN, TARGET_XY, 8)
     
 
 def initialise_game():
@@ -40,6 +40,6 @@ if __name__ == '__main__':
         play_game(screen, population)
         population.calculate_fitness()
         print(f'Gen {population.generation} total fitness {population.total_fitness}')
-        stop = population.stop_criteria()
+        stop = population.stop_evolution()
         population = population.natural_selection()
     end_game()
