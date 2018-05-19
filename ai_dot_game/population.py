@@ -1,4 +1,5 @@
 from .dot import Dot
+import random
 from . import *
 
 
@@ -12,8 +13,8 @@ class Population:
         [self.dots.append(Dot()) for i in range(pop_size)]
             
             
-    def show(self):
-        [dot.show() for dot in self.dots]
+    def show(self, screen):
+        [dot.show(screen) for dot in self.dots]
             
     def update(self):
         [dot.update(self.best_steps) for dot in self.dots]
@@ -30,7 +31,7 @@ class Population:
     
     def natural_selection(self):
 
-        def __create_new_dot__(newDot):
+        def __create_new_dot__():
             newDot = self.select_parent()
             newDot.mutate()
             return newDot
@@ -76,4 +77,3 @@ class Population:
             
     def stop_criteria(self):
         return self.total_fitness > 6
- 

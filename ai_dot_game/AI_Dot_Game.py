@@ -1,7 +1,5 @@
 import sys
 import pygame
-import operator  #add TUPLES
-import random
 from functools import reduce
 from .dot import Dot
 from .population import Population
@@ -23,7 +21,7 @@ def initialise_game():
 def play_game(screen, population):
     while population.alive():
         draw_target()
-        population.show()
+        population.show(screen)
         population.update()
         pygame.display.flip()
         screen.fill(BLACK)

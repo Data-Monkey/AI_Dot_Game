@@ -3,6 +3,7 @@ Dot Object
 """
 import random
 import pygame
+import operator  #add TUPLES
 from . import *
 
 
@@ -31,7 +32,7 @@ class Dot:
         dy = abs(posA[1] - posB[1])
         return int((dx**2 + dy**2)**0.5)     
 
-    def show(self):
+    def show(self, screen):
         if self.winner:
             pygame.draw.circle(screen, BLUE, self.posXY,3)            
         elif self.reached_goal:
@@ -91,4 +92,4 @@ class Dot:
         def __no_mutation__():
             return random.random() < MUTATE_RATIO
 
-        self.instructions = [inst if __no_mutation__() else random_vector() for inst in instructions]
+        self.instructions = [inst if __no_mutation__() else random_vector() for inst in self.instructions]
