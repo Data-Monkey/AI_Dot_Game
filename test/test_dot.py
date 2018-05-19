@@ -2,7 +2,8 @@
 Test module for the Dot object.
 """
 import pygame
-from ai_dot_game.AI_Dot_Game import Dot, START_XY, generate_instructions
+from ai_dot_game.AI_Dot_Game import Dot, START_XY
+from ai_dot_game.dot import generate_instructions
 
 
 def create_a_dot():
@@ -53,5 +54,5 @@ def test_move():
 
     dot = create_a_dot()
     assert dot.step == 0
-    steps = [move() for step in range(1001)]
-    assert steps == [step for step in range(1, 1002)]
+    steps = [move() for step in range(1000)]
+    assert steps == [step for step in range(1, 1001)]
