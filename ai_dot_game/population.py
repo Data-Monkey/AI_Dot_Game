@@ -26,10 +26,10 @@ class Population:
         """
         return [dot.show(screen) for dot in self.dots]
 
-    def update(self):
+    def update(self, obstacles):
         """ ask all dots to update themselves
         """
-        return [dot.update(self.best_steps) for dot in self.dots]
+        return [dot.update(obstacles=obstacles, move_limit=self.best_steps) for dot in self.dots]
 
     def calculate_fitness(self):
         """ get total fitness from all dots

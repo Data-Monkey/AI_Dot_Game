@@ -69,7 +69,7 @@ class Dot:
         else:
             self.dead = True
 
-    def update(self, move_limit=1000):
+    def update(self, obstacles, move_limit=1000):
         """ check if the dot is still alive and move if appropriate
         """
         if self.alive():
@@ -77,6 +77,9 @@ class Dot:
         # check if that move killed the dot
         if (self.posXY[0] < 3 or self.posXY[1] < 3 or
             self.posXY[0] > WIDTH-3 or self.posXY[1] > HEIGHT-3):
+            self.dead = True
+        # or hit an abstacle
+        elif obstacles.collision(self.posXY):
             self.dead = True
         # or has the dot reached the target?
         elif distance(self.posXY, TARGET_XY) < 4:

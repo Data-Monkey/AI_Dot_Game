@@ -32,10 +32,10 @@ class Obstacles:
                 H = random.randint(10, 20)
                 self.obstacles.append(Obstacle((X, Y), W, H))
 
-    def show(self):
+    def show(self, screen):
         """ ask all obstacles to show themselves
         """
-        return [obst.show() for obst in self.obstacles]
+        return [obst.show(screen) for obst in self.obstacles]
 
     def collision(self, dotXY):
         """ ask all obstacles in the dot collided
