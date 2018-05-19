@@ -5,9 +5,6 @@ import random
 
 
 
-pygame.init()
-clockobject = pygame.time.Clock()
-#clockobject.tick(1)
 
 WIDTH, HEIGHT = 800,800
 
@@ -23,6 +20,7 @@ TARGET_XY = (int(WIDTH/2),5)
 START_XY =  (int(WIDTH/2),HEIGHT-50)  # start at the bottom centre
 VECTOR_LEN = 10
 POPULATION_SIZE = 100
+OBSTACLE_MODE = ('none','simple','medium','hard','rand')[4]
 
 
 def draw_target():
@@ -51,19 +49,26 @@ class Obstacle:
 # -------------------------------------------------------------------
 
 class Obstacles:
-    def __init__(self, mode='simple'):
+    def __init__(self, mode='none'):
         self.mode = mode            
         self.obstacles = []
         self.create_obstacles()
         
     def create_obstacles(self):
         if self.mode == 'simple':
-            self.obstacles.append(Obstacle((300,300),200,10))
+            self.obstacles.append(Obstacle((300,400),400,20))
         elif self.mode == 'medium':
             self.obstacles.append(Obstacle((100,500),300,10))
         elif self.mode == 'hard':
             self.obstacles.append(Obstacle((0,400),500,10))
             self.obstacles.append(Obstacle((400,300),400,10))
+        elif self.mode == 'rand':
+            for i in range(random.randint(3,5)):
+                X = random.randint(0,WIDTH)
+                Y = random.randint(50,HEIGHT-50)
+                W = random.randint(10,WIDTH-X)
+                H = random.randint(10,20)
+                self.obstacles.append(Obstacle((X,Y),W,H))
     
     def show(self):
         [obst.show() for obst in self.obstacles]
@@ -72,6 +77,7 @@ class Obstacles:
         if True in [obst.collision(dotXY) for obst in self.obstacles]:
             return True
         return False
+    
 # -------------------------------------------------------------------
 class Dot:
     def __init__(self):
@@ -80,9 +86,8 @@ class Dot:
         self.dead = False
         self.reached_goal = False
         self.winner = False
-        self.step= 0
-        self.fitness = 0.000000
-
+        self.step = 0
+        self.fitness = 0.0
 
     def random_vector(self):
         X = random.randint(VECTOR_LEN*(-1),VECTOR_LEN)
@@ -98,7 +103,7 @@ class Dot:
     def __distance(self, posA=(0,0), posB=(0,0)):
         dx = abs(posA[0] - posB[0])
         dy = abs(posA[1] - posB[1])
-        return (dx**2 + dy**2)**0.5
+        return int((dx**2 + dy**2)**0.5)
 
     def show(self):
         if self.winner:
@@ -127,7 +132,7 @@ class Dot:
         elif obst.collision(self.posXY):
             self.dead = True
         # or has the dot reached the target?
-        elif self.__distance(self.posXY,TARGET_XY) < 5 :
+        elif self.__distance(self.posXY,TARGET_XY) < 4 :
             self.reached_goal = True
 
 
@@ -135,9 +140,10 @@ class Dot:
         # fitness is a function of distance to target
         # if target reached it is a function of steps taken
         dist = self.__distance(self.posXY, TARGET_XY)
-        if dist == 0.0:
-            dist = 1        
-        self.fitness = 1.00 / (dist**2)
+        if self.reached_goal:
+            self.fitness = 1.0/16.0 + 1000.0/self.step
+        else:
+            self.fitness = 1.00 / (dist**2)
         return self.fitness
 
     def alive(self):
@@ -165,8 +171,12 @@ class Population:
         # create the generation of dots
         [self.dots.append(Dot()) for i in range(pop_size)]
 
+    def show_stats(self):
+        screen.blit(font.render(f'Generation: {self.generation+1}', True, (255,0,0)), (10, 10))
+        pygame.display.update()
 
     def show(self):
+        self.show_stats()
         [dot.show() for dot in self.dots]
 
     def update(self):
@@ -180,11 +190,8 @@ class Population:
         [dot.randomize_instructions(size) for dot in self.dots]
 
     def alive(self):
-        for dot in self.dots:
-            if dot.alive():
-                return True
-        return False  # nobody alive
-
+        return (True in [dot.alive() for dot in self.dots])
+        
     def natural_selection(self):
         nextGen = Population(len(self.dots))
         # find a parent for all new dots and mutate them
@@ -218,13 +225,11 @@ class Population:
         return best_dot
 
     def select_parent(self):
-
+        """ the fitness of each parent determines the likelyhood 
+            of being chosen to have babies (each baby only has 1 parent)
+        """
         rand = random.uniform(0,self.total_fitness)
-        
-#        rand = random.randint(0,POPULATION_SIZE-1)
-#        return self.dots[rand].clone()
-
-        running_sum = 0.000
+        running_sum = 0.0
         for dot in self.dots:
             running_sum += dot.fitness
             if running_sum >= rand:
@@ -233,40 +238,47 @@ class Population:
         # this should never happen
         return None
 
+    def stop_evolution(self):
+        return self.total_fitness > 6
 
 # -------------------------------------------------------------------
 if __name__ == "__main__":
 # -------------------------------------------------------------------
+    pygame.init()
+    clockobject = pygame.time.Clock()
+    #clockobject.tick(1)
+
+    screen = pygame.display.set_mode((HEIGHT, WIDTH))
+    font = pygame.font.SysFont('Arial', 12)
     
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    obst = Obstacles(mode='hard')
+    obst = Obstacles(mode=OBSTACLE_MODE)
     
-    gen = []
     pop = Population(POPULATION_SIZE)
     pop.randomize_instructions(1000)
     
-    for i in range(200) :
+    stop_evolution = False
+    
+    while not stop_evolution:
     # let evolution do its work
-    
-    
         pygame.display.update()
         while pop.alive():
-
-            if i%1 == 0: 
-                # only draw ever x generations
-                pygame.display.flip()
-                screen.fill(BLACK)
-                draw_target()
-                obst.show()
-                pop.show()
-                
+            # draw the playing field
+            draw_target()
+            obst.show()
+            # show the dots and move them
+            pop.show()
             pop.update()
-        
+            # clcean up for next move
+            pygame.display.flip()
+            screen.fill(BLACK)
+            
         # generation done
         pop.calculate_fitness()
         print(f'Gen {pop.generation} total fitness {pop.total_fitness}')
+        stop_evolution = pop.stop_evolution()
         next_pop = pop.natural_selection()
         pop = next_pop
     
+    input('Press ENTER to exit')
     pygame.quit()
     sys.exit()
