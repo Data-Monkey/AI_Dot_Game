@@ -20,7 +20,7 @@ TARGET_XY = (int(WIDTH/2),5)
 START_XY =  (int(WIDTH/2),HEIGHT-50)  # start at the bottom centre
 VECTOR_LEN = 10
 POPULATION_SIZE = 100
-OBSTACLE_MODE = ('none','simple','medium','hard','rand')[4]
+OBSTACLE_MODE = ('none','simple','medium','hard','rand')[3]
 
 
 def draw_target():
@@ -60,11 +60,11 @@ class Obstacles:
         elif self.mode == 'medium':
             self.obstacles.append(Obstacle((100,500),300,10))
         elif self.mode == 'hard':
+            self.obstacles.append(Obstacle((300,300),500,10))
             self.obstacles.append(Obstacle((0,400),500,10))
-            self.obstacles.append(Obstacle((400,300),400,10))
         elif self.mode == 'rand':
             for i in range(random.randint(3,5)):
-                X = random.randint(0,WIDTH)
+                X = random.randint(0,WIDTH-10)
                 Y = random.randint(50,HEIGHT-50)
                 W = random.randint(10,WIDTH-X)
                 H = random.randint(10,20)
